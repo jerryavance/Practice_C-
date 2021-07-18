@@ -741,6 +741,7 @@ int main()
 */
 
 
+/* 
 #include <iostream>
 #include <string>
 using namespace std;
@@ -863,6 +864,256 @@ int main()
 	jerry.setName("jerry"); jerry.setAge(23); jerry.setId(7567); jerry.setUniversity("MIT");
 	cout << jerry.speak() << " with name " << jerry.getName() << " and age " << jerry.getAge() << " unique id: " << jerry.getId() << " unique univerity: " << jerry.getUniversity() << endl;
 }
+*/
+
+//Design and implement a system of vehicles.
+//A family car has a color, a maximum speedand a sunroof.The sunroof can be openedand closed.
+//A cab's color is always yellow and it has a maximum speed.
+//A bicycle has a color, a maximum speed and pedals that can be spun.
+//A truck has a color, a maximum speed, and it can carry a cab or a family car, but not a bicycle.
+//A road can contain any of the above.
+//A policeman has a hat, and can block a road or any vehicle.
+//Tip: You can chain inheritance, and create trees.
+
+
+#include <iostream>
+#include <string>
+#include <vector>
+#include <algorithm>
+using namespace std;
+
+//need to fix how this fits in
+class Road {
+protected:
+	bool RoadblockStatus;
+	//system of vehicles initialized on road
+	//policeman initialized on road
+	bool get_RoadBlockStatus() { return RoadblockStatus; }
+	void set_RoadBlockStatus(bool dRoadblockStatus) { RoadblockStatus = dRoadblockStatus; }
+public:
+	Road():
+		RoadblockStatus(false)
+	{}
+};
+
+
+class system_of_vehicles {
+private:
+	double max_speed;
+	string color;
+	bool vehicleBlockStatus;
+protected:
+	void set_vehicleBlockStatus(bool dvehicleBlockStatus) { vehicleBlockStatus = dvehicleBlockStatus; }
+public:
+	double get_max_speed() { return max_speed; }
+	void set_max_speed(double dmax_speed) { max_speed = dmax_speed; }
+	string get_color() { return color; }
+	void set_color(string dcolor) { color = dcolor; }
+	bool get_vehicleBlock_status() { return vehicleBlockStatus; }
+
+	system_of_vehicles (double dmax_speed, string dcolor, bool dvehicleBlockStatus = false):
+		max_speed(dmax_speed), color(dcolor), vehicleBlockStatus(dvehicleBlockStatus)
+	{}
+	system_of_vehicles() :
+		max_speed(0.0), color("none"), vehicleBlockStatus(false)
+	{}
+};
+
+
+class family_car : public system_of_vehicles {
+private:
+	string sunroof;
+protected:
+	string get_sunroof() { return sunroof; }
+	void set_sunroof(string dsunroof) { sunroof = dsunroof; }
+public:
+	family_car(double dmax_speed, string dcolor, string dsunroof, bool dvehicleBlockStatus) :
+		system_of_vehicles(dmax_speed, dcolor, dvehicleBlockStatus), sunroof(dsunroof)
+	{}
+};
+
+class cab : public system_of_vehicles {
+public:
+	cab(double dmax_speed,  bool dvehicleBlockStatus, string dcolor = "yellow" ) :
+		system_of_vehicles(dmax_speed, dcolor, dvehicleBlockStatus)
+	{}
+};
+
+
+class bicycle : public system_of_vehicles {
+private:
+	string pedals;
+protected:
+	string get_pedals() { return pedals; }
+	void set_pedals(string dpedals) { pedals = dpedals; }
+public:
+	bicycle(double dmax_speed, string dcolor, string dpedals , bool dvehicleBlockStatus ) :
+		system_of_vehicles(dmax_speed, dcolor, dvehicleBlockStatus), pedals(dpedals)
+	{}
+	bicycle():
+		system_of_vehicles(32.7, "silver", false), pedals("yes")
+	{}
+};
+
+/*   
+// major changes needed to this class
+class truck : public system_of_vehicles {
+private:
+	union loadUnion {
+		cab cab_load;
+		family_car family_car_load;
+	} load1, load2;
+	vector<loadUnion> load_carried;  
+public:
+	void load_truck(cab dcab_load ) { 
+		//this needs new ideas and serious investigation
+		//loadUnion* ptrLoad1;
+		//ptrLoad1 = &load1;
+		//ptrLoad1.cab_load = dcab_load;
+
+		load1.cab_load = dcab_load;
+		load_carried.push_back(load1);
+	}
+	void load_truck(family_car dfamily_car_load) { 
+		load2.family_car_load = dfamily_car_load;
+		load_carried.push_back(load2);
+	}
+
+	truck(double dmax_speed, string dcolor, bool dvehicleBlockStatus ) : 
+		system_of_vehicles(dmax_speed, dcolor, dvehicleBlockStatus )
+	{}
+
+	truck():
+
+	{}
+};
+*/
+
+
+class police : public Road , public system_of_vehicles {
+private:
+	string hat;
+protected:
+	string get_hat() { return hat; }
+	void set_hat(string dhat) { hat = dhat; }
+	/* 
+	void police_set_RoadBlock_status( bool dRoadblockStatus) 
+	{ 
+		RoadBlockStatus = dRoadblockStatus;
+	}
+	void police_set_vehicleBlock_status(bicycle vehicle, bool dvehicleBlockStatus)
+	{ 
+		vehicle.set_vehicleBlockStatus(dvehicleBlockStatus);
+	}
+	*/ 
+	
+public:
+	police():
+		hat("army hat")
+	{}
+};
+
+
+/* 
+int main()
+{
+	Road expressway;
+	Road pypass;
+
+	cout << "for my car: " << endl;
+	family_car mycar(250.0, "black", "on", false);
+	cout << " my car get color: " << mycar.get_color() << endl;
+	mycar.set_color("blue");
+	cout << " my car new color: " << mycar.get_color() << endl;
+	cout << " my car get max speed: " << mycar.get_max_speed() << endl;
+	mycar.set_max_speed(300.0);
+	cout << " my car new max speed: " << mycar.get_max_speed() << endl;
+	cout << " my car block status: " << mycar.get_vehicleBlock_status() << endl;
+	//cout << " my car get sunroof: " << mycar.get_sunroof() << endl;
+	//mycar.set_sunroof("off");
+	//cout << " my car new sunroof: " << mycar.get_sunroof() << endl;
+
+	cout << "for my uber: " << endl;
+	cab uber(80.0, false);
+	cout << " my uber get color: " << uber.get_color() << endl;
+	uber.set_color("white");
+	cout << " my uber new color: " << uber.get_color() << endl;
+	cout << " my uber get max speed: " << uber.get_max_speed() << endl;
+	mycar.set_max_speed(85.7);
+	cout << " my uber new max speed: " << uber.get_max_speed() << endl;
+	cout << " my uber block status: " << uber.get_vehicleBlock_status() << endl;
+
+
+	cout << "for my bicycle: " << endl;
+	bicycle mybic;
+	cout << " mybic get color: " << mybic.get_color() << endl;
+	cout << " mybic get max speed: " << mybic.get_max_speed() << endl;
+	cout << " mybic block status: " << mybic.get_vehicleBlock_status() << endl;
+	mybic.set_color("red");
+	cout << " mybic new color: " << mybic.get_color() << endl;
+	mybic.set_max_speed(25.8);
+	cout << " mybic new max speed: " << mybic.get_max_speed() << endl;
+	//cout << "mybic get pedals: " << mybic.get_pedals() << endl;
+	//mybic.set_pedals("no");
+	//cout << " mybic new pedals: " << mybic.get_pedals() << endl;
+
+	cout << "for my police: " << endl;
+	police cop;
+	//cout << "police initialized hat: " << cop.get_hat() << endl;
+	//cop.set_hat("police hat");
+	//cout << "police initialized hat: " << cop.get_hat() << endl;
+
+
+	return 0;
+}
+*/
+
+
+
+#include <iostream>
+#include <string>
+using namespace std;
+
+class employee {
+protected:
+	int salary;
+};
+
+class programmer : public employee {
+public:
+	int bonus;
+	void setSalary(int s) { salary = s; }
+	int getSalary() { return salary;}
+};
+
+int main()
+{
+	programmer myobj;
+	myobj.setSalary(50000);
+	myobj.bonus = 15000;
+	cout << "salary: " << myobj.getSalary() << "\n";
+	cout << "Bonus: " << myobj.bonus << "\n";
+	return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
